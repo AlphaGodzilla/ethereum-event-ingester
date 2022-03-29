@@ -8,8 +8,8 @@ import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractEve
 import io.github.alphagozilla.ethereum.event.ingester.manage.domain.RegisterContract;
 import io.github.alphagozilla.ethereum.event.ingester.manage.domain.RegisterContractEntry;
 import io.github.alphagozilla.ethereum.event.ingester.manage.domain.RegisterContractRepository;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.SyncContractQueryRepository;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.SyncableEvent;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.RegisterSyncContractQueryRepository;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.RegisterSyncableEvent;
 import io.github.alphagozilla.ethereum.event.ingester.notice.domain.NoticeChannelType;
 import org.springframework.stereotype.Component;
 
@@ -25,19 +25,19 @@ import java.util.stream.Collectors;
 public class SyncableContractAppService {
     private final RegisterContractEntry registerContractEntry;
     private final RegisterContractRepository registerContractRepository;
-    private final SyncContractQueryRepository syncContractQueryRepository;
+    private final RegisterSyncContractQueryRepository registerSyncContractQueryRepository;
     private final FlowableEventContractFactory flowableEventContractFactory;
     private final ContractEventFactory contractEventFactory;
 
     public SyncableContractAppService(RegisterContractEntry registerContractEntry,
                                       RegisterContractRepository registerContractRepository,
-                                      SyncContractQueryRepository syncContractQueryRepository,
+                                      RegisterSyncContractQueryRepository registerSyncContractQueryRepository,
                                       FlowableEventContractFactory flowableEventContractFactory,
                                       ContractEventFactory contractEventFactory
     ) {
         this.registerContractEntry = registerContractEntry;
         this.registerContractRepository = registerContractRepository;
-        this.syncContractQueryRepository = syncContractQueryRepository;
+        this.registerSyncContractQueryRepository = registerSyncContractQueryRepository;
         this.flowableEventContractFactory = flowableEventContractFactory;
         this.contractEventFactory = contractEventFactory;
     }
@@ -53,7 +53,7 @@ public class SyncableContractAppService {
     public void registerContract(Address contract,
                                  String name,
                                  BigInteger initBlock,
-                                 List<SyncableEvent> events,
+                                 List<RegisterSyncableEvent> events,
                                  NoticeChannelType noticeChannelType,
                                  String channelValue
     ) {
@@ -69,7 +69,7 @@ public class SyncableContractAppService {
      * @return 合约列表
      */
     public List<FlowableEventContract> listAllEnableContracts() {
-        List<RegisterContract> registerContracts = syncContractQueryRepository.list(true, null);
+        List<RegisterContract> registerContracts = registerSyncContractQueryRepository.list(true, null);
         return registerContracts.stream()
                 .collect(Collectors.groupingBy(RegisterContract::getName, Collectors.toList()))
                 .entrySet()
@@ -87,7 +87,7 @@ public class SyncableContractAppService {
                                 .collect(Collectors.toSet())
                         )
                         .eventLogConsumer(i.getValue().stream()
-                                .findAny().map(RegisterContract::getNoticeChannel).orElse(null)
+                                .findAny().map(RegisterContract::getRegisterNoticeChannel).orElse(null)
                         ).build()
                 )
                 .map(flowableEventContractFactory::factoryNew)

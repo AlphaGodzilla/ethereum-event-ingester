@@ -3,14 +3,14 @@ package io.github.alphagozilla.ethereum.event.ingester.manage.infra.persistent.r
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.Address;
 import io.github.alphagozilla.ethereum.event.ingester.manage.domain.RegisterContract;
 import io.github.alphagozilla.ethereum.event.ingester.manage.domain.RegisterContractRepository;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.NoticeChannel;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.NoticeChannelRepository;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.contract.SyncableContract;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.contract.SyncableContractRepository;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.SyncableEvent;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.RegisterNoticeChannel;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.RegisterNoticeChannelRepository;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.contract.RegisterSyncableContract;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.contract.RegisterSyncableContractRepository;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.RegisterSyncableEvent;
 import io.github.alphagozilla.ethereum.event.ingester.manage.infra.converter.RegisterContractConverter;
-import io.github.alphagozilla.ethereum.event.ingester.manage.infra.converter.SyncableEventConverter;
-import io.github.alphagozilla.ethereum.event.ingester.manage.infra.persistent.mapper.SyncableEventDO;
+import io.github.alphagozilla.ethereum.event.ingester.manage.infra.converter.RegisterSyncableEventConverter;
+import io.github.alphagozilla.ethereum.event.ingester.manage.infra.persistent.mapper.RegisterSyncableEventDO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,15 +23,15 @@ import java.util.List;
 public class RegisterContractRepositoryImpl implements RegisterContractRepository {
 
     private final SyncableEventRepository syncableEventRepository;
-    private final SyncableContractRepository syncableContractRepository;
-    private final NoticeChannelRepository noticeChannelRepository;
+    private final RegisterSyncableContractRepository registerSyncableContractRepository;
+    private final RegisterNoticeChannelRepository registerNoticeChannelRepository;
 
     public RegisterContractRepositoryImpl(SyncableEventRepository syncableEventRepository,
-                                          SyncableContractRepository syncableContractRepository,
-                                          NoticeChannelRepository noticeChannelRepository) {
+                                          RegisterSyncableContractRepository registerSyncableContractRepository,
+                                          RegisterNoticeChannelRepository registerNoticeChannelRepository) {
         this.syncableEventRepository = syncableEventRepository;
-        this.syncableContractRepository = syncableContractRepository;
-        this.noticeChannelRepository = noticeChannelRepository;
+        this.registerSyncableContractRepository = registerSyncableContractRepository;
+        this.registerNoticeChannelRepository = registerNoticeChannelRepository;
     }
 
     @Override
@@ -48,25 +48,25 @@ public class RegisterContractRepositoryImpl implements RegisterContractRepositor
         // 删除所有注册事件
         syncableEventRepository.removeByContract(contract.getAddress());
         // 重新注册
-        List<SyncableEvent> events = contract.getEvents();
-        List<SyncableEventDO> syncableEvents = SyncableEventConverter.INSTANCE.toDataObjects(events);
+        List<RegisterSyncableEvent> events = contract.getEvents();
+        List<RegisterSyncableEventDO> syncableEvents = RegisterSyncableEventConverter.INSTANCE.toDataObjects(events);
         syncableEventRepository.saveBatch(syncableEvents);
     }
 
     private void registerContract(RegisterContract contract) {
-        SyncableContract syncableContract = contract.toSyncableContract();
-        syncableContractRepository.deleteAndSave(syncableContract);
+        RegisterSyncableContract registerSyncableContract = contract.toSyncableContract();
+        registerSyncableContractRepository.deleteAndSave(registerSyncableContract);
     }
 
     private void registerNoticeChannel(RegisterContract contract) {
-        noticeChannelRepository.saveOrUpdate(contract.getNoticeChannel());
+        registerNoticeChannelRepository.saveOrUpdate(contract.getRegisterNoticeChannel());
     }
 
     @Override
     public RegisterContract findOfId(Address contractAddress) {
-        SyncableContract syncableContract = syncableContractRepository.findOfId(contractAddress);
-        List<SyncableEvent> syncableEvents = syncableEventRepository.listByContract(contractAddress);
-        NoticeChannel noticeChannel = noticeChannelRepository.findOfId(contractAddress);
-        return RegisterContractConverter.INSTANCE.toDomain(syncableContract, syncableEvents, noticeChannel);
+        RegisterSyncableContract registerSyncableContract = registerSyncableContractRepository.findOfId(contractAddress);
+        List<RegisterSyncableEvent> registerSyncableEvents = syncableEventRepository.listByContract(contractAddress);
+        RegisterNoticeChannel registerNoticeChannel = registerNoticeChannelRepository.findOfId(contractAddress);
+        return RegisterContractConverter.INSTANCE.toDomain(registerSyncableContract, registerSyncableEvents, registerNoticeChannel);
     }
 }

@@ -1,15 +1,24 @@
 spring:
   application:
     name: EthereumEventIngester
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/eth_log_ingester?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: root
   redis:
     host: localhost
     database: 0
 
+logging:
+  level:
+    io.github.alphagozilla.ethereum.event.ingester: debug
 
 # ORM配置
 mybatis-plus:
   configuration:
     mapUnderscoreToCamelCase: true
+  type-handlers-package: io.github.alphagozilla.ethereum.event.ingester.system.infra.typehandler
 
 web3j:
   endpoint: https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161

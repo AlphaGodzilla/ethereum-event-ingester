@@ -1,4 +1,4 @@
-package io.github.alphagozilla.ethereum.event.ingester.ingester.infra.persistent;
+package io.github.alphagozilla.ethereum.event.ingester.manage.infra.persistent.mapper;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -13,18 +13,25 @@ import java.sql.Timestamp;
 
 /**
  * @author AlphaGodzilla
- * @date 2022/3/25 15:02
+ * @date 2022/3/25 10:09
  */
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@TableName(value = "contract_sync_progress", autoResultMap = true)
-public class ContractSyncProgressDO {
+@TableName(value = "register_syncable_contract", autoResultMap = true)
+public class RegisterSyncableContractDO {
     @TableId(type = IdType.INPUT)
-    private Address contract;
+    private Address address;
 
-    private String block;
+    private String name;
 
-    private Timestamp updatedAt;
+    private String initBlock;
+
+    /**
+     * indexed
+     */
+    private Boolean enable;
+
+    private Timestamp lastRegisterAt;
 }

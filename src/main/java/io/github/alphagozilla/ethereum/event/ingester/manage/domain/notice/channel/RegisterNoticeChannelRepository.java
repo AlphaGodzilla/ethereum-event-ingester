@@ -2,14 +2,12 @@ package io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.chan
 
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.Address;
 
-import java.util.List;
-
 /**
  * @author AlphaGodzilla
  * @date 2022/3/29 13:33
  */
-public interface NoticeChannelRepository {
-    boolean saveOrUpdate(NoticeChannel noticeChannel);
+public interface RegisterNoticeChannelRepository {
+    boolean saveOrUpdate(RegisterNoticeChannel registerNoticeChannel);
 
-    NoticeChannel findOfId(Address address);
+    RegisterNoticeChannel findOfId(Address address);
 }

@@ -1,7 +1,7 @@
 package io.github.alphagozilla.ethereum.event.ingester.manage.infra.converter;
 
 import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractEventAbi;
-import io.github.alphagozilla.ethereum.event.ingester.manage.infra.persistent.typehandler.ContractEventAbiTypeHandler;
+import io.github.alphagozilla.ethereum.event.ingester.system.infra.typehandler.ContractEventAbiTypeHandler;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

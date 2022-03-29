@@ -1,4 +1,4 @@
-package io.github.alphagozilla.ethereum.event.ingester.manage.infra.persistent.typehandler;
+package io.github.alphagozilla.ethereum.event.ingester.system.infra.typehandler;
 
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.Address;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.util.StringUtil;

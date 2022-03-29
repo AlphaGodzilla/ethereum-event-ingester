@@ -31,7 +31,7 @@ public class IngesterTaskQueueScheduler {
         this.taskFactory = taskFactory;
     }
 
-    @Scheduled(initialDelay = 30, fixedDelay = 60, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 30, fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
     public void feedTask() {
         log.debug("触发同步任务");
         List<FlowableEventContract> flowableEventContracts = syncableContractAppService.listAllEnableContracts();
@@ -40,6 +40,9 @@ public class IngesterTaskQueueScheduler {
                 .collect(Collectors.toSet()),
                 flowableEventContracts.size()
         );
+        if (flowableEventContracts.isEmpty()) {
+            return;
+        }
         int count = taskQueue.offerUntilArriveLoadFactor(() -> taskFactory.factoryNew(flowableEventContracts));
         log.info("补充队列任务数: {}", count);
     }

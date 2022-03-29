@@ -8,5 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2022/3/29 13:33
  */
 @Mapper
-public interface NoticeChannelDOMapper extends BaseMapper<NoticeChannelDO> {
+public interface RegisterNoticeChannelDOMapper extends BaseMapper<RegisterNoticeChannelDO> {
 }

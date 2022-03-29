@@ -2,8 +2,9 @@ package io.github.alphagozilla.ethereum.event.ingester.manage.domain;
 
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.Address;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.util.TimestampUtil;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.RegisterNoticeChannel;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.RegisterSyncableEvent;
 import io.github.alphagozilla.ethereum.event.ingester.notice.domain.NoticeChannelType;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.SyncableEvent;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -24,12 +25,12 @@ public class RegisterContractEntry {
     public RegisterContract factoryNew(Address contract,
                                        String name,
                                        BigInteger initBlock,
-                                       List<SyncableEvent> events,
+                                       List<RegisterSyncableEvent> events,
                                        NoticeChannelType channelType,
                                        String channelValue
     ) {
-        io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.NoticeChannel noticeChannel = io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.NoticeChannel.builder()
-                .address(contract)
+        RegisterNoticeChannel registerNoticeChannel = RegisterNoticeChannel.builder()
+                .contract(contract)
                 .noticeChannelType(channelType)
                 .channel(channelValue)
                 .build();
@@ -40,7 +41,7 @@ public class RegisterContractEntry {
                 .enable(true)
                 .events(events)
                 .lastRegisterAt(TimestampUtil.now())
-                .noticeChannel(noticeChannel)
+                .registerNoticeChannel(registerNoticeChannel)
                 .build();
     }
 

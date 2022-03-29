@@ -11,7 +11,7 @@ import lombok.Value;
  */
 @Builder
 @Value
-public class SyncableEvent {
+public class RegisterSyncableEvent {
     Long id;
 
     Address contract;

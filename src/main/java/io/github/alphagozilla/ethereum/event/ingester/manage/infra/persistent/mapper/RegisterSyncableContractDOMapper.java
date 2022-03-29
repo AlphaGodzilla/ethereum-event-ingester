@@ -5,8 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author AlphaGodzilla
- * @date 2022/3/25 11:01
+ * @date 2022/3/25 10:18
  */
 @Mapper
-public interface SyncableEventDOMapper extends BaseMapper<SyncableEventDO> {
+public interface RegisterSyncableContractDOMapper extends BaseMapper<RegisterSyncableContractDO> {
 }

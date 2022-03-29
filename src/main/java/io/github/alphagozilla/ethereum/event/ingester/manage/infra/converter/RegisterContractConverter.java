@@ -1,9 +1,9 @@
 package io.github.alphagozilla.ethereum.event.ingester.manage.infra.converter;
 
 import io.github.alphagozilla.ethereum.event.ingester.manage.domain.RegisterContract;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.NoticeChannel;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.contract.SyncableContract;
-import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.SyncableEvent;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.notice.channel.RegisterNoticeChannel;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.contract.RegisterSyncableContract;
+import io.github.alphagozilla.ethereum.event.ingester.manage.domain.syncable.event.RegisterSyncableEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -18,12 +18,12 @@ import java.util.List;
 public interface RegisterContractConverter {
     RegisterContractConverter INSTANCE = Mappers.getMapper(RegisterContractConverter.class);
 
-    @Mapping(source = "syncableContract.address", target = "address")
-    @Mapping(source = "syncableContract.name", target = "name")
-    @Mapping(source = "syncableContract.initBlock", target = "initBlock")
-    @Mapping(source = "syncableContract.enable", target = "enable")
-    @Mapping(source = "syncableContract.lastRegisterAt", target = "lastRegisterAt")
+    @Mapping(source = "registerSyncableContract.address", target = "address")
+    @Mapping(source = "registerSyncableContract.name", target = "name")
+    @Mapping(source = "registerSyncableContract.initBlock", target = "initBlock")
+    @Mapping(source = "registerSyncableContract.enable", target = "enable")
+    @Mapping(source = "registerSyncableContract.lastRegisterAt", target = "lastRegisterAt")
     @Mapping(source = "events", target = "events")
-    @Mapping(source = "noticeChannel", target = "noticeChannel")
-    RegisterContract toDomain(SyncableContract syncableContract, List<SyncableEvent> events, NoticeChannel noticeChannel);
+    @Mapping(source = "registerNoticeChannel", target = "registerNoticeChannel")
+    RegisterContract toDomain(RegisterSyncableContract registerSyncableContract, List<RegisterSyncableEvent> events, RegisterNoticeChannel registerNoticeChannel);
 }

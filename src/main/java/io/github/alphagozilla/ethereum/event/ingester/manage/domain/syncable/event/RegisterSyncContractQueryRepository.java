@@ -9,7 +9,7 @@ import java.util.List;
  * @author AlphaGodzilla
  * @date 2022/3/25 14:01
  */
-public interface SyncContractQueryRepository {
+public interface RegisterSyncContractQueryRepository {
     /**
      * 查询注册合约列表
      * @param enable 合约是否可用

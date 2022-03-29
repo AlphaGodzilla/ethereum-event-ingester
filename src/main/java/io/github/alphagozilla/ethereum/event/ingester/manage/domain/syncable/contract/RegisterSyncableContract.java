@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Value
 @Builder
-public class SyncableContract {
+public class RegisterSyncableContract {
     Address address;
 
     String name;

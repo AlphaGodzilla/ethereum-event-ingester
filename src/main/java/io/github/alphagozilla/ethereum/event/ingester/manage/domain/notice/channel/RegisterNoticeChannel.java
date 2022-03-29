@@ -17,8 +17,8 @@ import java.util.Optional;
 @Slf4j
 @Value
 @Builder
-public class NoticeChannel implements ContractEventLogConsumer {
-    Address address;
+public class RegisterNoticeChannel implements ContractEventLogConsumer {
+    Address contract;
 
     NoticeChannelType noticeChannelType;
 
