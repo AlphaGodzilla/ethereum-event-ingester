@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: EthereumEventIngester
+  redis:
+    host: localhost
+    database: 0
+
+
+# ORM配置
+mybatis-plus:
+  configuration:
+    mapUnderscoreToCamelCase: true
+
+web3j:
+  endpoint: https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+  timeout: 30s
+  log: true
+  qps: 25
+  pause: 30s
+
+# 抓取器配置
+ingester:
+  queue:
+    # 队列最大长度
+    max: 500
+    # 队列负载率
+    load-factor: 0.2
+  consumer:
+    # 最小等待时间
+    min-wait: 6ms
+    # 最大等待时间
+    max-wait: 60s
+    # 超频消费后的暂停时间
+    pause: 3s
