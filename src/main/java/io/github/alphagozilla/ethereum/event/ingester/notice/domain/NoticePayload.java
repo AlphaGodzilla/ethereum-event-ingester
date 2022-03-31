@@ -12,5 +12,6 @@ import lombok.Value;
 @Builder
 public class NoticePayload {
     ContractRawEventLog raw;
+    String eventName;
     String event;
 }

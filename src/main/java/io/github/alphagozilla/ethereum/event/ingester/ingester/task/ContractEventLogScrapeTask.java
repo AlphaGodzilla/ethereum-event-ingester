@@ -1,6 +1,6 @@
 package io.github.alphagozilla.ethereum.event.ingester.ingester.task;
 
-import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainHeightQuery;
+import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainInfoQuery;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.Address;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.FlowableEventContract;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractRawEventLog;
@@ -21,16 +21,16 @@ import java.util.concurrent.Callable;
 public class ContractEventLogScrapeTask implements Callable<Boolean> {
     private final ContractEventLogScraper scraper;
     private final SyncProgressManager syncProgressManager;
-    private final BlockChainHeightQuery blockChainHeightQuery;
+    private final BlockChainInfoQuery blockChainInfoQuery;
     private final List<FlowableEventContract> flowableEventContracts;
 
     public ContractEventLogScrapeTask(ContractEventLogScraper scraper,
                                       SyncProgressManager syncProgressManager,
-                                      BlockChainHeightQuery blockChainHeightQuery,
+                                      BlockChainInfoQuery blockChainInfoQuery,
                                       List<FlowableEventContract> flowableEventContracts) {
         this.scraper = scraper;
         this.syncProgressManager = syncProgressManager;
-        this.blockChainHeightQuery = blockChainHeightQuery;
+        this.blockChainInfoQuery = blockChainInfoQuery;
         this.flowableEventContracts = flowableEventContracts;
     }
 
@@ -75,7 +75,7 @@ public class ContractEventLogScrapeTask implements Callable<Boolean> {
     }
 
     private boolean hasLogs(ScrapeLogsResult result) {
-        BigInteger blockHeight = blockChainHeightQuery.blockHeight();
+        BigInteger blockHeight = blockChainInfoQuery.blockHeight();
         BigInteger endBlock = result.getEndBlock();
         return result.getLogs().size() > 0 ||
                 CompareUtil.isGreaterThan(blockHeight.subtract(endBlock), BigInteger.valueOf(1000));

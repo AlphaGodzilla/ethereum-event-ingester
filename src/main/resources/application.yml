@@ -20,6 +20,14 @@ mybatis-plus:
     mapUnderscoreToCamelCase: true
   type-handlers-package: io.github.alphagozilla.ethereum.event.ingester.system.infra.typehandler
 
+# 文档配置
+knife4j:
+  enable: ${KNIFE4J_ENABLE:true}
+  production: ${KNIFE4J_PRODUCTION:true}
+  setting:
+    enableDebug: ${KNIFE4J_SETTING_ENABLEDEBUG:false} # !!注意：生产环境应该为false
+
+# web3j配置
 web3j:
   endpoint: https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
   timeout: 30s

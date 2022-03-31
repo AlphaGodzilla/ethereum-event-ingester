@@ -17,13 +17,20 @@ public class ContractSyncProgressRepositoryImpl
 
     @Override
     public boolean saveOrUpdate(ContractSyncProgress progress) {
-        ContractSyncProgressDO contractSyncProgressDO = ContractSyncProgressConverter.INSTANT.toDataObject(progress);
+        ContractSyncProgressDO contractSyncProgressDO = ContractSyncProgressDO.builder()
+                .contract(progress.getContract())
+                .block(progress.getBlock().toString())
+                .updatedAt(progress.getUpdatedAt())
+                .build();
         return super.saveOrUpdate(contractSyncProgressDO);
     }
 
     @Override
     public ContractSyncProgress find(Address contract) {
         ContractSyncProgressDO progressDO = super.getById(contract.getValue());
-        return ContractSyncProgressConverter.INSTANT.toDomain(progressDO);
+        if (progressDO == null) {
+            return null;
+        }
+        return progressDO.toDomain();
     }
 }

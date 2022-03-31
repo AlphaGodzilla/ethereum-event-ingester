@@ -5,16 +5,16 @@ package io.github.alphagozilla.ethereum.event.ingester.ingester.event;
  * @date 2022/3/29 11:12
  */
 public class ContractEventFactory {
-    private final ContractEventTopic0Encoder contractEventTopic0Encoder;
+    private final EventParser eventParser;
 
-    public ContractEventFactory(ContractEventTopic0Encoder contractEventTopic0Encoder) {
-        this.contractEventTopic0Encoder = contractEventTopic0Encoder;
+    public ContractEventFactory(EventParser eventParser) {
+        this.eventParser = eventParser;
     }
 
     public ContractEvent factoryNew(String name, ContractEventAbi abi) {
         return ContractEvent.builder()
                 .name(name)
-                .topics0(contractEventTopic0Encoder.encodeToTopic0(abi))
+                .topics0(eventParser.encodeEventToTopic0(abi))
                 .abi(abi)
                 .build();
     }

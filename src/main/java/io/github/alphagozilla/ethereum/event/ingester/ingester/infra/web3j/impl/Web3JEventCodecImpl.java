@@ -1,8 +1,9 @@
 package io.github.alphagozilla.ethereum.event.ingester.ingester.infra.web3j.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.alphagozilla.ethereum.event.ingester.ingester.event.*;
-import io.github.alphagozilla.ethereum.event.ingester.ingester.infra.converter.ContractRawEventLogConverter;
+import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractEventAbi;
+import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractRawEventLog;
+import io.github.alphagozilla.ethereum.event.ingester.ingester.event.EventParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.EventEncoder;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class Web3JEventCodecImpl implements EventParser, ContractEventTopic0Encoder, ContractEventDecoder {
+public class Web3JEventCodecImpl implements EventParser {
     private final ObjectMapper objectMapper;
 
     public Web3JEventCodecImpl(ObjectMapper objectMapper) {
@@ -34,25 +35,36 @@ public class Web3JEventCodecImpl implements EventParser, ContractEventTopic0Enco
     @Override
     public String toJson(ContractRawEventLog eventLog, ContractEventAbi abi) {
         Event event = buildEvent(abi);
-        Log web3jLog = ContractRawEventLogConverter.INSTANT.toWeb3jLog(eventLog);
+        Log web3jLog = new Log(
+                eventLog.isRemoved(),
+                eventLog.getLogIndex().toString(),
+                eventLog.getTransactionIndex().toString(),
+                eventLog.getTransactionHash(),
+                eventLog.getBlockHash(),
+                eventLog.getBlockNumber().toString(),
+                eventLog.getAddress().getValue(),
+                eventLog.getData(),
+                eventLog.getType(),
+                eventLog.getTopics()
+        );
         EventValues eventValues = Contract.staticExtractEventParameters(event, web3jLog);
         if (eventValues == null) {
             return "";
         }
         List<Type> indexedValues = eventValues.getIndexedValues();
         List<Type> nonIndexedValues = eventValues.getNonIndexedValues();
-        LinkedHashMap<String, String> jsonMap = new LinkedHashMap<>(indexedValues.size() + nonIndexedValues.size());
+        LinkedHashMap<String, Object> jsonMap = new LinkedHashMap<>(indexedValues.size() + nonIndexedValues.size());
         List<ContractEventAbi.Input> indexedInputs = abi.indexedInputs();
         List<ContractEventAbi.Input> nonIndexedInputs = abi.nonIndexedInputs();
         for (int i = 0; i < indexedValues.size(); i++) {
             ContractEventAbi.Input indexInput = indexedInputs.get(i);
             Type type = indexedValues.get(i);
-            jsonMap.put(indexInput.getName(), type.getValue().toString());
+            jsonMap.put(indexInput.getName(), type.getValue());
         }
         for (int i = 0; i < nonIndexedValues.size(); i++) {
             ContractEventAbi.Input nonIndexedInput = nonIndexedInputs.get(i);
             Type type = nonIndexedValues.get(i);
-            jsonMap.put(nonIndexedInput.getName(), type.getValue().toString());
+            jsonMap.put(nonIndexedInput.getName(), type.getValue());
         }
         try {
             return objectMapper.writeValueAsString(jsonMap);
@@ -75,15 +87,5 @@ public class Web3JEventCodecImpl implements EventParser, ContractEventTopic0Enco
             return TypeReference.create(type, i.isIndexed());
         }).collect(Collectors.toList());
         return new Event(eventName, parameters);
-    }
-
-    @Override
-    public String parseToJsonStr(ContractEventAbi abi, ContractRawEventLog eventLog) {
-        return toJson(eventLog, abi);
-    }
-
-    @Override
-    public String encodeToTopic0(ContractEventAbi eventAbi) {
-        return encodeEventToTopic0(eventAbi);
     }
 }

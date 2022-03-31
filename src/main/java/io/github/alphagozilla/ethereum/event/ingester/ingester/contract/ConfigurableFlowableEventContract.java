@@ -84,6 +84,6 @@ public class ConfigurableFlowableEventContract implements FlowableEventContract 
             log.warn("合约: {}, 事件: {} 没有注册渠道", eventLog.getAddress().getValue(), event.getName());
             return;
         }
-        eventLogConsumer.consume(eventLog, eventJson);
+        eventLogConsumer.consume(eventLog, event, eventJson);
     }
 }

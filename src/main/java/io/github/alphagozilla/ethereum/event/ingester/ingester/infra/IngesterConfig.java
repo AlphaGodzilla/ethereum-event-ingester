@@ -1,10 +1,9 @@
 package io.github.alphagozilla.ethereum.event.ingester.ingester.infra;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainHeightQuery;
+import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainInfoQuery;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.FlowableEventContractFactory;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractEventFactory;
-import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractEventTopic0Encoder;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.event.EventParser;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.progress.SyncProgressManager;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.scraper.ContractEventLogScraper;
@@ -38,9 +37,9 @@ public class IngesterConfig {
     @Bean
     public ContractEventLogScrapeTaskFactory contractEventLogScraperFactory(ContractEventLogScraper scraper,
                                                                             SyncProgressManager syncProgressManager,
-                                                                            BlockChainHeightQuery blockChainHeightQuery
+                                                                            BlockChainInfoQuery blockChainInfoQuery
     ) {
-        return new ContractEventLogScrapeTaskFactory(scraper, syncProgressManager, blockChainHeightQuery);
+        return new ContractEventLogScrapeTaskFactory(scraper, syncProgressManager, blockChainInfoQuery);
     }
 
     @Value("${ingester.queue.max}")
@@ -59,7 +58,7 @@ public class IngesterConfig {
     }
 
     @Bean
-    public ContractEventFactory contractEventFactory(ContractEventTopic0Encoder contractEventTopic0Encoder) {
-        return new ContractEventFactory(contractEventTopic0Encoder);
+    public ContractEventFactory contractEventFactory(EventParser eventParser) {
+        return new ContractEventFactory(eventParser);
     }
 }

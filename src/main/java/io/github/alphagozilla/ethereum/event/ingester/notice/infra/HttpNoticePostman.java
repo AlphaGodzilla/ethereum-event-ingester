@@ -1,8 +1,7 @@
 package io.github.alphagozilla.ethereum.event.ingester.notice.infra;
 
-import io.github.alphagozilla.ethereum.event.ingester.notice.domain.NoticeChannelType;
-import io.github.alphagozilla.ethereum.event.ingester.notice.domain.NoticeEnvelope;
-import io.github.alphagozilla.ethereum.event.ingester.notice.domain.NoticePayload;
+import io.github.alphagozilla.ethereum.event.ingester.notice.domain.ChannelType;
+import io.github.alphagozilla.ethereum.event.ingester.notice.domain.NoticeMessage;
 import io.github.alphagozilla.ethereum.event.ingester.notice.domain.NoticePostman;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +12,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class HttpNoticePostman implements NoticePostman {
     @Override
-    public NoticeChannelType channelType() {
-        return NoticeChannelType.HTTP;
+    public ChannelType channelType() {
+        return ChannelType.HTTP;
     }
 
+
     @Override
-    public void postNotice(NoticeEnvelope envelope, NoticePayload payload) {
+    public void postNotice(NoticeMessage message) {
         // TODO: 发送消息
     }
 }

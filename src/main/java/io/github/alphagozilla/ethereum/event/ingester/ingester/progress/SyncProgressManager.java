@@ -29,6 +29,7 @@ public class SyncProgressManager {
         ContractSyncProgress contractSyncProgress = entry.load(contract).orElseGet(() ->
                 entry.factoryNew(contract, endBlockNumber)
         );
+        contractSyncProgress.changeBlock(endBlockNumber);
         repository.saveOrUpdate(contractSyncProgress);
     }
 

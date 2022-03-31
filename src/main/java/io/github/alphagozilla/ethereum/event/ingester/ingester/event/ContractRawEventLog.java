@@ -15,8 +15,8 @@ import java.util.List;
 @Builder
 public class ContractRawEventLog {
     boolean removed;
-    String logIndex;
-    String transactionIndex;
+    BigInteger logIndex;
+    BigInteger transactionIndex;
     String transactionHash;
     String blockHash;
     BigInteger blockNumber;

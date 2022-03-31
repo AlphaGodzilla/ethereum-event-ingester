@@ -1,11 +1,10 @@
 package io.github.alphagozilla.ethereum.event.ingester.ingester.infra.web3j.impl;
 
-import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainHeightQuery;
+import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainInfoQuery;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.Address;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.FlowableEventContract;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractRawEventLog;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.event.EventParser;
-import io.github.alphagozilla.ethereum.event.ingester.ingester.infra.converter.ContractRawEventLogConverter;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.infra.web3j.client.Web3jFactory;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.scraper.ContractEventLogScraper;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.scraper.ScrapeLogsResult;
@@ -35,14 +34,14 @@ public class Web3jContractEventLogScraper implements ContractEventLogScraper {
     private static final BigInteger DEFAULT_BLOCK_STEP = BigInteger.valueOf(5000);
 
     private final Web3jFactory web3jFactory;
-    private final BlockChainHeightQuery blockChainHeightQuery;
+    private final BlockChainInfoQuery blockChainInfoQuery;
     private final EventParser eventParser;
 
     public Web3jContractEventLogScraper(Web3jFactory web3jFactory,
-                                        BlockChainHeightQuery blockChainHeightQuery,
+                                        BlockChainInfoQuery blockChainInfoQuery,
                                         EventParser eventParser) {
         this.web3jFactory = web3jFactory;
-        this.blockChainHeightQuery = blockChainHeightQuery;
+        this.blockChainInfoQuery = blockChainInfoQuery;
         this.eventParser = eventParser;
     }
 
@@ -62,7 +61,20 @@ public class Web3jContractEventLogScraper implements ContractEventLogScraper {
             Log log = (Log) logResult.get();
             logs.add(log);
         }
-        List<ContractRawEventLog> rawEventLogs = ContractRawEventLogConverter.INSTANT.toContractRawEventLogs(logs);
+        List<ContractRawEventLog> rawEventLogs = logs.stream()
+                .map(i -> ContractRawEventLog.builder()
+                        .removed(i.isRemoved())
+                        .logIndex(i.getLogIndex())
+                        .transactionIndex(i.getTransactionIndex())
+                        .transactionHash(i.getTransactionHash())
+                        .blockHash(i.getBlockHash())
+                        .blockNumber(i.getBlockNumber())
+                        .address(new Address(i.getAddress()))
+                        .data(i.getData())
+                        .type(i.getType())
+                        .topics(i.getTopics())
+                        .build()
+                ).collect(Collectors.toList());
         return ScrapeLogsResult.builder()
                 .logs(rawEventLogs)
                 .startBlock(startBlock)
@@ -71,7 +83,7 @@ public class Web3jContractEventLogScraper implements ContractEventLogScraper {
     }
 
     private BigInteger startBlock(List<FlowableEventContract> contracts) {
-        BigInteger blockHeight = blockChainHeightQuery.blockHeight();
+        BigInteger blockHeight = blockChainInfoQuery.blockHeight();
         List<BigInteger> startBlocks = contracts.stream()
                 .map(FlowableEventContract::startBlock)
                 .collect(Collectors.toList());
@@ -99,7 +111,7 @@ public class Web3jContractEventLogScraper implements ContractEventLogScraper {
     }
 
     private BigInteger endBlock(BigInteger startBlock) {
-        BigInteger blockHeight = blockChainHeightQuery.blockHeight();
+        BigInteger blockHeight = blockChainInfoQuery.blockHeight();
         BigInteger endBlock = startBlock.add(DEFAULT_BLOCK_STEP);
         if (CompareUtil.equals(endBlock, blockHeight)) {
             return blockHeight;

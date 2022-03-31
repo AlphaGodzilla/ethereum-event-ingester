@@ -4,12 +4,16 @@ import io.github.alphagozilla.ethereum.event.ingester.ingester.util.StringUtil;
 import lombok.Getter;
 import lombok.Value;
 
+import java.io.Serializable;
+
 /**
  * @author AlphaGodzilla
  * @date 2022/3/24 16:17
  */
 @Value
-public class Address {
+public class Address implements Serializable {
+    private static final long serialVersionUID = -3378320834853080628L;
+
     @Getter
     String value;
 

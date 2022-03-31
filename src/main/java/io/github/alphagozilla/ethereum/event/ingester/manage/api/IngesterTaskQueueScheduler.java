@@ -35,9 +35,9 @@ public class IngesterTaskQueueScheduler {
     public void feedTask() {
         log.debug("触发同步任务");
         List<FlowableEventContract> flowableEventContracts = syncableContractAppService.listAllEnableContracts();
-        log.info("需同步合约: {}, 数量: {}", flowableEventContracts.stream()
-                .map(FlowableEventContract::name)
-                .collect(Collectors.toSet()),
+        log.info("需同步合约: [{}], 数量: {}", flowableEventContracts.stream()
+                        .map(FlowableEventContract::name)
+                        .collect(Collectors.toSet()),
                 flowableEventContracts.size()
         );
         if (flowableEventContracts.isEmpty()) {

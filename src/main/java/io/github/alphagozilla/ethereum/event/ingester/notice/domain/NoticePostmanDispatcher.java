@@ -1,7 +1,5 @@
 package io.github.alphagozilla.ethereum.event.ingester.notice.domain;
 
-import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractEventLogConsumer;
-import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractRawEventLog;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,9 +17,12 @@ public class NoticePostmanDispatcher {
         this.noticePostmen = noticePostmen;
     }
 
-    public Optional<NoticePostman> dispatchPostman(NoticeChannelType channelType) {
+    public Optional<NoticePostman> dispatchPostman(ChannelType channelType) {
+        if (channelType == null) {
+            channelType = ChannelType.DEFAULT;
+        }
         for (final NoticePostman noticePostman : noticePostmen) {
-            NoticeChannelType noticeChannelType = noticePostman.channelType();
+            ChannelType noticeChannelType = noticePostman.channelType();
             if (noticeChannelType.equals(channelType)) {
                 return Optional.of(noticePostman);
             }

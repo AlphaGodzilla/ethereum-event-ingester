@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.event.ContractEventAbi;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.util.StringUtil;
-import io.github.alphagozilla.ethereum.event.ingester.manage.infra.converter.ContractEventAbiConverter;
 import io.github.alphagozilla.ethereum.event.ingester.system.infra.ApplicationContextHolder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
@@ -15,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author AlphaGodzilla
@@ -26,10 +29,20 @@ public class ContractEventAbiTypeHandler extends BaseTypeHandler<ContractEventAb
         if (eventAbi == null) {
             return;
         }
+        ContractEventAbiSerializable serializable = ContractEventAbiSerializable.builder()
+                .name(eventAbi.getName())
+                .inputs(eventAbi.getInputs().stream()
+                        .map(input -> ContractEventAbiSerializable.Input.builder()
+                                .indexed(input.isIndexed())
+                                .name(input.getName())
+                                .type(input.getType())
+                                .build()
+                        ).collect(Collectors.toList())
+                ).build();
         ObjectMapper jackson = ApplicationContextHolder.getBean(ObjectMapper.class);
         try {
-            preparedStatement.setString(i, jackson.writeValueAsString(eventAbi));
-        }catch (JsonProcessingException exception) {
+            preparedStatement.setString(i, jackson.writeValueAsString(serializable));
+        } catch (JsonProcessingException exception) {
             throw new RuntimeException(exception);
         }
     }
@@ -61,18 +74,33 @@ public class ContractEventAbiTypeHandler extends BaseTypeHandler<ContractEventAb
             ContractEventAbiSerializable contractEventAbiSerializable = jackson.readValue(
                     abiStr, ContractEventAbiSerializable.class
             );
-            return ContractEventAbiConverter.INSTANCE.toContractEventAbi(contractEventAbiSerializable);
+            return ContractEventAbi.builder()
+                    .name(contractEventAbiSerializable.getName())
+                    .inputs(contractEventAbiSerializable.getInputs().stream()
+                            .map(i -> ContractEventAbi.Input.builder()
+                                    .indexed(i.isIndexed())
+                                    .type(i.getType())
+                                    .name(i.getName())
+                                    .build()
+                            ).collect(Collectors.toList())
+                    ).build();
         }catch (Exception exception) {
             throw new RuntimeException(exception);
         }
     }
 
     @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ContractEventAbiSerializable {
         String name;
-        List<ContractEventAbi.Input> inputs;
+        List<Input> inputs;
 
         @Data
+        @Builder
+        @AllArgsConstructor
+        @NoArgsConstructor
         public static class Input {
             boolean indexed;
             String type;

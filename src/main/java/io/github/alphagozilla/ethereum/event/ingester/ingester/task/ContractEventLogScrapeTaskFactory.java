@@ -1,6 +1,6 @@
 package io.github.alphagozilla.ethereum.event.ingester.ingester.task;
 
-import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainHeightQuery;
+import io.github.alphagozilla.ethereum.event.ingester.ingester.BlockChainInfoQuery;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.contract.FlowableEventContract;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.progress.SyncProgressManager;
 import io.github.alphagozilla.ethereum.event.ingester.ingester.scraper.ContractEventLogScraper;
@@ -14,18 +14,18 @@ import java.util.List;
 public class ContractEventLogScrapeTaskFactory {
     private final ContractEventLogScraper scraper;
     private final SyncProgressManager syncProgressManager;
-    private final BlockChainHeightQuery blockChainHeightQuery;
+    private final BlockChainInfoQuery blockChainInfoQuery;
 
     public ContractEventLogScrapeTaskFactory(ContractEventLogScraper scraper,
                                              SyncProgressManager syncProgressManager,
-                                             BlockChainHeightQuery blockChainHeightQuery
+                                             BlockChainInfoQuery blockChainInfoQuery
     ) {
         this.scraper = scraper;
         this.syncProgressManager = syncProgressManager;
-        this.blockChainHeightQuery = blockChainHeightQuery;
+        this.blockChainInfoQuery = blockChainInfoQuery;
     }
 
     public ContractEventLogScrapeTask factoryNew(List<FlowableEventContract> flowableEventContracts) {
-        return new ContractEventLogScrapeTask(scraper, syncProgressManager, blockChainHeightQuery, flowableEventContracts);
+        return new ContractEventLogScrapeTask(scraper, syncProgressManager, blockChainInfoQuery, flowableEventContracts);
     }
 }
